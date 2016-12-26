@@ -94,18 +94,6 @@ public class Main {
 		//剩余资源
 		int sulplus1[] = {2,3,2,2};
 		//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-//		int sum[] = new int[sulplus.length];
-//		//将剩余资源添加到总资源中
-//		for (int i = 0; i < sum.length; i++) {
-//			sum[i] = sulplus[i];
-//		}
-//		//计算总资源数,纵向求和
-//		for (int i = 0; i < arrayAlot1.length; i++) {
-//			for (int j = 0; j < arrayAlot1[0].length; j++) {
-//				sum[j] = sum[j] + arrayAlot1[i][j];  
-//			}
-//		}
-		//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 		arrayAlot = arrayAlot1;  
 		arrayNeed = arrayNeed1;
 		sulplus = sulplus1;
