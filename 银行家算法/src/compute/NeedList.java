@@ -23,28 +23,42 @@ public class NeedList {
 	public List<String> getSafeList(int arrayAlot[][],int arrayNeed[][],int sulplus[]){
 		List<String> stringList = new ArrayList<String>();//安全序列
 		boolean testAlot = false;//判断是分配条件	默认为安全
-		initPrint(arrayAlot,arrayNeed,sulplus);
 		
 		//* * * * * * * * * * * * * * * * * * * 核心算法 * * * * *  * * * * * * * * * * * * * * * * * 
  		//几个进程跑几次
 		for (int i = 0; i < arrayAlot.length; i++) {
+		//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			initPrint(arrayAlot,arrayNeed,sulplus);
 			//添加是否执行请求
+			String order = "1";
 			System.out.print("是否需要执行请求[1/0]：");
 			Scanner in = new Scanner(System.in);
-			String order = in.nextLine();
+			order = in.nextLine();
 			while(!order.equals("1") && !order.equals("0")){
 				System.out.print("指令错误重新输入，是否需要执行请求[1/0]：");
 				order = in.next();
 			}
-			
-			if (order.equals("1")){
-				int[] request = isRequest(arrayAlot,arrayNeed,sulplus,stringList);
-				if (request != null){ 	//提出請求可以分配
-					System.out.println("该请求安全，给予分配！");
-					for (int n = 0; n < 4; n++)  sulplus[n]= sulplus[n] - request[n];//分配
+			while(!order.equals("0")){
+				
+				if (order.equals("1")){
+					int[] request = isRequest(arrayAlot,arrayNeed,sulplus,stringList);
+					System.out.println();
+					if (request != null){ 	//提出請求可以分配
+						System.out.println("该请求安全，给予分配！");
+						for (int n = 0; n < 4; n++)  sulplus[n]= sulplus[n] - request[n];//分配
+					}else System.out.println("此状态不安全！不进行分配");
+				}		
+				System.out.println();
+				initPrint(arrayAlot,arrayNeed,sulplus);
+				System.out.print("是否需要执行请求[1/0]：");
+				in = new Scanner(System.in);
+				order = in.nextLine();
+				while(!order.equals("1") && !order.equals("0")){
+					System.out.print("指令错误重新输入，是否需要执行请求[1/0]：");
+					order = in.next();
 				}
 			}
-			
+		//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			testAlot = false;	//重置安全
 			//选择可行进程进行分配
 			int j = 0;
@@ -70,10 +84,11 @@ public class NeedList {
 				sulplus[k] = sulplus[k] + arrayAlot[j][k];
 				//尚需资源，将其设为最大100
 				arrayNeed[j][k] = 100;
+				arrayAlot[j][k] = 0;
 			}
-			initPrint(arrayAlot,arrayNeed,sulplus);
 			String tempString = "P" + (j + 1);
 			stringList.add(tempString);
+			initPrint(arrayAlot,arrayNeed,sulplus);
 		}
 		return stringList;
 	}
@@ -106,8 +121,19 @@ public class NeedList {
 	/**
 	 * 执行每次分配的请求,请求的是分配，并打印可行安全序列
 	 */
-	private int[] isRequest(int arrayAlot[][],int arrayNeed[][],int sulplus[],List<String> strings) {
+	private int[] isRequest(int inArrayAlot[][],int inArrayNeed[][],int inSulplus[],List<String> strings) {
+		int arrayAlot[][] = new int[inArrayAlot.length][inArrayAlot[0].length];
+		int arrayNeed[][] = new int[inArrayAlot.length][inArrayAlot[0].length];
+		int sulplus[] = new int[inSulplus.length];
 		
+		for (int i = 0; i < sulplus.length; i++) sulplus[i] = inSulplus[i];
+		for (int i = 0; i < inArrayAlot.length; i++) {
+			for (int j = 0; j < inArrayAlot[0].length; j++) {
+				arrayAlot[i][j] = inArrayAlot[i][j];
+				arrayNeed[i][j] = inArrayNeed[i][j];
+			}
+		}
+		//- - - - - - - - - - - - - - - - - - - 输入 - - - - - - - - - - - - - - - - - - - - - - - -
 		Scanner in = new Scanner(System.in);
 		int n = 100;
 		int request[] = new int[4];
@@ -116,38 +142,55 @@ public class NeedList {
 			n = in.nextInt();
 		}
 		System.out.print("请输入请求序列，如 1 0 2 0，即 P"+n+"进程需要请求[A-1，B-0，C-2，D-0]:");
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) 
 			request[i] = in.nextInt();
-		}
+		//- - - - - - - - - - - - - - - - - - - 输入 - - - - - - - - - - - - - - - - - - - - - - - -
+		
+		/*
+		 * 更新需求矩阵和可用资源
+		 */
 		for (int i = 0; i < 4; i++) {
 			sulplus[i] = sulplus[i] - request[i];	//試分配
 			arrayNeed[n-1][i] = arrayNeed[n-1][i] - request[i];
+			//System.out.println(sulplus[i] + "  "+ arrayNeed[n-1][i]);
+			if (sulplus[i] < 0){
+				System.out.println("试分配失败！");
+				return null;
+			}
 			if (arrayNeed[n-1][i] < 0) 
 				System.out.println("输入请求超出原先需求!");
-			System.out.println(sulplus[i] + "  " + arrayNeed[n-1][i]);
+			arrayAlot[n-1][i] = arrayAlot[n-1][i] + request[i];
 		}
 		
+		/*
+		 * 试分配核心算法
+		 * 
+		 */
 		boolean testAlot = false;//判断是分配条件	默认为安全
 		//几个进程跑几次
 		for (int i = 0; i < arrayAlot.length; i++) {
-			testAlot = false;	//重置安全
+			testAlot = false;	//重置安全标志
 			//选择可行进程进行分配
 			int j = 0;
 			int t = 0;
 			for (j = 0; j < arrayNeed.length; j++) {
-				
-				for (t = 0; t < arrayNeed[0].length; t++)
-					if (testAlot = (sulplus[t] < arrayNeed[j][t])) 
-						//相当于 sulplus[t] - arrayNeed[j][t] < 0
-						//testAlot 为是否安全，满足这个if条件的不安全
-						break;	//不满足分配条件，不够分配	testAlot为true
-				
+				for (t = 0; t < arrayNeed[0].length; t++){
+//					System.out.println(t+"  " + sulplus[t] +"   "+ arrayNeed[j][t]+"   " +(sulplus[t] < arrayNeed[j][t]));
+					if (testAlot = (sulplus[t] < arrayNeed[j][t])) break;
+				}							
 				if (!testAlot)
 					break;	//满足分配条件，跳出进行分配
 			}
-			if (testAlot) {	//没有可以分配的	不安全
-				System.out.println("* 试分配完毕！ *");
-				return request;
+			if (testAlot) {	//没有可以分配的	或者不安全
+				if (strings.size() >= 4) {
+					System.out.println("* 试分配完毕！ *");
+					for (String str : strings) 
+						System.out.print(str + " --> ");
+					return request;
+				}else{
+					System.out.println("* 试分配失败！ *");
+					return null;
+				}
 			}
 			//对j进行分配（Pj+1进程）
 			for (int k = 0; k < sulplus.length; k++) {
@@ -155,14 +198,22 @@ public class NeedList {
 				sulplus[k] = sulplus[k] + arrayAlot[j][k];
 				//尚需资源，将其设为最大100
 				arrayNeed[j][k] = 100;
+				arrayAlot[j][k] = 0;
 			}
 			String tempString = "P" + (j + 1);
 			strings.add(tempString);
+			
 		}
-		if (strings.size() == 5){
+		
+		if (strings.size() > 4) {
+			System.out.println("* 试分配完毕！ *");
+			System.out.print("存在安全序列：   ");
 			for (String str : strings) 
 				System.out.print(str + " --> ");
 			return request;
-		} else return null;
+		}else{
+			System.out.println("* 试分配失败！ *");
+			return null;
+		}
 	}
 }
