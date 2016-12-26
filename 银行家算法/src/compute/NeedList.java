@@ -20,22 +20,27 @@ public class NeedList {
 	 */
 	public List<String> getSafeList(int arrayAlot[][],int arrayNeed[][],int sulplus[]){
 		List<String> stringList = new ArrayList<String>();
+		boolean testAlot = false;//判断是分配条件	默认为安全
 		//几个进程跑几次
-		for (int i = 0; i < arrayAlot.length; i++) {	
+		for (int i = 0; i < arrayAlot.length; i++) {
+			testAlot = false;	//重置安全
 			//选择可行进程进行分配
 			int j = 0;
 			int t = 0;
 			for (j = 0; j < arrayNeed.length; j++) {
-				for (t = 0; t < arrayNeed[0].length; t++)
-					if (sulplus[t] < arrayNeed[j][t]) 
-						break;	//不满足分配条件，不够分配
 				
-				if (t >= arrayNeed[0].length)
+				for (t = 0; t < arrayNeed[0].length; t++)
+					if (testAlot = (sulplus[t] < arrayNeed[j][t])) 
+						//相当于 sulplus[t] - arrayNeed[j][t] < 0
+						//testAlot 为是否安全，满足这个if条件的不安全
+						break;	//不满足分配条件，不够分配	testAlot为true
+				
+				if (!testAlot)
 					break;	//满足分配条件，跳出进行分配
 			}
-			if (j >= arrayNeed.length) {	//没有可以分配的
-				System.out.println("无可分配进程。");
-				return stringList;
+			if (testAlot) {	//没有可以分配的	不安全
+				System.out.println("无可分配资源，无法生成安全序列！");
+				return null;
 			}
 			//对j进行分配（Pj+1进程）
 			for (int k = 0; k < sulplus.length; k++) {

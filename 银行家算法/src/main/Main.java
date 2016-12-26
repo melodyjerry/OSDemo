@@ -21,9 +21,13 @@ public class Main {
 		init();	
 		NeedList list = new NeedList();
 		List<String> safeList= list.getSafeList(arrayAlot, arrayNeed, sulplus);
-		System.out.println("安全序列为：");
-		for (String string : safeList) {
-			System.out.print(string + " --> ");
+		
+		if (safeList != null) {
+			System.out.println("安全序列为：");
+		
+			for (String string : safeList) {
+				System.out.print(string + " --> ");
+			}
 		}
 	}
 	
