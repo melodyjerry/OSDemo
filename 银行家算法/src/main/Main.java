@@ -1,6 +1,7 @@
 package main;
 
 import java.util.List;
+import java.util.Scanner;
 
 import compute.NeedList;
 
@@ -80,20 +81,56 @@ public class Main {
 		 * （8）输出所求序列，退出
 		 */
 		//已分配矩阵
-		int arrayAlot1[][] = {{2,0,1,1},
-							 {7,2,0,0},
-							 {5,2,0,3},
-							 {2,5,5,3},
-							 {0,5,8,6}};
+//		int arrayAlot1[][] = {{2,0,1,1},
+//							 {7,2,0,0},
+//							 {5,2,0,3},
+//							 {2,5,5,3},
+//							 {0,5,8,6}};
+		
+//		int arrayAlot1[][] = {		{2,3},
+//									{1,2},
+//									{3,1}};
+		
 		//待分配矩阵
-		int arrayNeed1[][] = {{1,1,2,0},
-							 {4,0,2,0},
-							 {3,5,2,0},
-							 {5,3,5,5},
-							 {8,6,0,5}};
+//		int arrayNeed1[][] = {{1,1,2,0},
+//							 {4,0,2,0},
+//							 {3,5,2,0},
+//							 {5,3,5,5},
+//							 {8,6,0,5}};
+		
+//		int arrayNeed1[][] = {		{3,4},
+//									{2,2},
+//									{3,2}};
+		
 		//剩余资源
-		int sulplus1[] = {2,3,2,2};
+//		int sulplus1[] = {2,3,2,2};
+		
+//		int sulplus1[] = {2,2};
 		//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+		
+		/*
+		 * 输入
+		 */
+		int sulplus1[] = new int[2];
+		int arrayNeed1[][] = new int[3][2];
+		int arrayAlot1[][] = new int[3][2];
+		Scanner in = new Scanner(System.in);
+		System.out.println("请输入已分配矩阵（2*3）：");
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < sulplus1.length; j++) {
+				arrayAlot1[i][j] = in.nextInt();
+			}
+		}
+		System.out.println("请输入需求矩阵（2*3）：");
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < sulplus1.length; j++) {
+				arrayNeed1[i][j] = in.nextInt();
+			}
+		}
+		System.out.println("请输入需求矩阵（2*3）：");
+		for (int j = 0; j < sulplus1.length; j++) {
+			sulplus1[j] = in.nextInt();
+		}
 		arrayAlot = arrayAlot1;  
 		arrayNeed = arrayNeed1;
 		sulplus = sulplus1;
